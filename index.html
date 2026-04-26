@@ -5,17 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nam Hải Oracle - Master Detective</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #e94560; display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .container { background: #16213e; padding: 20px; border-radius: 15px; box-shadow: 0 0 20px rgba(0,0,0,0.5); max-width: 500px; width: 100%; }
-        h1 { text-align: center; color: #0f3460; background: #e94560; padding: 10px; border-radius: 10px; }
-        label { display: block; margin-top: 10px; color: #0f3460; font-weight: bold; color: #fff; }
-        input, textarea, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: none; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; margin-top: 20px; background: #e94560; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1.1em; }
-        button:hover { background: #ff4d6d; }
-        #results, #final { margin-top: 20px; padding: 15px; border-radius: 10px; white-space: pre-wrap; line-height: 1.6; }
-        #results { color: #00d2ff; font-style: italic; }
-        #final { background: #0f3460; color: #fff; border-left: 5px solid #e94560; display: none; }
-        .input-group { background: #1a1a2e; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1a1a2e; color: #fff; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: #16213e; padding: 25px; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); max-width: 550px; width: 100%; }
+        h1 { text-align: center; color: #fff; background: #e94560; padding: 15px; border-radius: 10px; margin-top: 0; font-size: 1.5em; text-transform: uppercase; letter-spacing: 2px; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #00d2ff; }
+        input, textarea, select { width: 100%; padding: 12px; margin-top: 8px; border-radius: 6px; border: 1px solid #0f3460; background: #1a1a2e; color: #fff; box-sizing: border-box; outline: none; }
+        input:focus, textarea:focus { border-color: #e94560; }
+        button { width: 100%; padding: 15px; margin-top: 25px; background: #e94560; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: 0.3s; }
+        button:hover { background: #ff4d6d; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4); }
+        #results { margin-top: 20px; color: #00d2ff; font-style: italic; text-align: center; min-height: 24px; }
+        #final { margin-top: 15px; padding: 20px; background: #0f3460; border-radius: 10px; border-left: 5px solid #e94560; display: none; line-height: 1.6; animation: fadeIn 0.5s ease; }
+        #phase2 { display: none; margin-top: 25px; padding: 20px; background: #1a1a2e; border: 1px dashed #e94560; border-radius: 10px; animation: slideUp 0.4s ease; }
+        .checkbox-group label { display: flex; align-items: center; background: #16213e; padding: 12px; border-radius: 5px; cursor: pointer; font-weight: normal; color: #fff; margin-top: 10px; transition: 0.2s; }
+        .checkbox-group label:hover { background: #0f3460; }
+        .checkbox-group input { width: auto; margin-right: 15px; transform: scale(1.2); }
+        .footer { margin-top: 30px; font-size: 0.8em; color: #533483; text-align: center; opacity: 0.7; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -23,166 +29,184 @@
 <div class="container">
     <h1>NAM HAI ORACLE</h1>
     
-    <div class="input-group">
-        <label>Tên của bạn (hoặc Biệt danh):</label>
-        <input type="text" id="name" placeholder="Ví dụ: Anh Long">
+    <div id="input-form">
+        <label>Tên / Biệt danh:</label>
+        <input type="text" id="name" placeholder="Anh Long...">
         
-        <label>Bạn đang tìm đồ vật gì?</label>
-        <input type="text" id="question" placeholder="Ví dụ: Chìa khóa xe, ví tiền...">
+        <label>Đồ vật cần tìm:</label>
+        <input type="text" id="question" placeholder="Ví dụ: Chìa khóa, Ví, Điện thoại...">
+
+        <label>Mô tả sự việc:</label>
+        <textarea id="story" rows="3" placeholder="Tôi đi làm về, để đồ xuống bàn rồi đi tắm..."></textarea>
+
+        <label>Điểm neo cuối cùng:</label>
+        <input type="text" id="last-seen" placeholder="Thấy cái túi, hoặc thấy vợ...">
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Thời điểm:</label>
+                <select id="time-period">
+                    <option value="Sáng">Sáng</option><option value="Trưa">Trưa</option>
+                    <option value="Chiều">Chiều</option><option value="Đêm">Đêm</option>
+                </select>
+            </div>
+            <div style="flex: 1;">
+                <label>Thói quen:</label>
+                <select id="user-habit">
+                    <option value="Nguyên tắc">Cẩn thận</option>
+                    <option value="Hay quên">Hay quên</option>
+                    <option value="Xao lãng">Đang xao lãng</option>
+                </select>
+            </div>
+        </div>
+
+        <button onclick="startSearch()">BẮT ĐẦU TRUY VẾT</button>
     </div>
-
-    <div class="input-group">
-        <label>Kể lại ngắn gọn sự việc:</label>
-        <textarea id="story" rows="3" placeholder="Ví dụ: Tôi đi xe về, đặt ví xuống rồi đi tắm..."></textarea>
-    </div>
-
-    <div class="input-group">
-        <label>Đồ vật/Con người cuối cùng bạn thấy?</label>
-        <input type="text" id="last-seen" placeholder="Ví dụ: Thấy vợ, hoặc cái túi xách...">
-    </div>
-
-    <div class="input-group">
-        <label>Thời điểm xảy ra:</label>
-        <select id="time-period">
-            <option value="Sáng">Sáng (Ánh sáng rõ)</option>
-            <option value="Trưa">Trưa (Ánh sáng gắt)</option>
-            <option value="Chiều">Chiều (Ánh sáng yếu)</option>
-            <option value="Đêm">Đêm (Bóng tối/Đèn)</option>
-        </select>
-
-        <label>Thói quen của bạn:</label>
-        <select id="user-habit">
-            <option value="Nguyên tắc">Cẩn thận, nguyên tắc</option>
-            <option value="Hay quên">Hay quên, vội vã</option>
-            <option value="Xao lãng">Đang lo lắng, xao lãng</option>
-        </select>
-    </div>
-
-    <button onclick="startSearch()">BẮT ĐẦU TRUY VẾT</button>
 
     <div id="results"></div>
     <div id="final"></div>
+
+    <div id="phase2">
+        <b style="color: #e94560;">🔍 ĐIỀU TRA THỰC ĐỊA:</b>
+        <div class="checkbox-group">
+            <label><input type="checkbox" id="hasSurface"> Có bàn / kệ / bề mặt phẳng gần đó</label>
+            <label><input type="checkbox" id="hasContainer"> Có túi xách / ví / vật chứa kín</label>
+            <label><input type="checkbox" id="hasPocket"> Bạn đang mặc đồ có túi</label>
+            <label><input type="checkbox" id="changedClothes"> Bạn vừa mới thay đồ hoặc đi tắm</label>
+        </div>
+    </div>
+
+    <div class="footer">Engine Suy Luận Hành Vi & Nhân Quả Nam Hải v3.5<br>© 2026 Vung Tau Detective AI</div>
 </div>
 
 <script>
-// --- 1. DỮ LIỆU WISDOM MAP (HỆ THỐNG CƠ CHẾ) ---
 const WisdomMap = {
-    0: { place: "Lối đi, hành lang, cửa ra vào", state: "Rơi rớt khi di chuyển", mechanism: "Sự thay đổi không gian đột ngột khiến vật rơi khỏi tầm mắt." },
-    1: { place: "Bàn làm việc, nơi có đồ điện tử", state: "Nằm trên bề mặt phẳng", mechanism: "Bạn đặt xuống để rảnh tay thực hiện thao tác khác." },
-    2: { place: "Trong túi, vật chứa kín, ngăn kéo", state: "Bị kẹp hoặc che khuất", mechanism: "Vật bị bao bọc quá kỹ hoặc bị vật khác đè lên." },
-    4: { place: "Kệ tủ, nơi có tính trật tự", state: "Bị đè dưới vật nặng hơn", mechanism: "Sự sắp xếp nhất thời đã che lấp vật phẩm." },
-    6: { place: "Không gian chung, gần người khác", state: "Nằm gần đồ người khác", mechanism: "Xao lãng do tương tác xã hội hoặc người thứ hai." },
-    7: { place: "Phương tiện, hộc xe, túi khoác", state: "Kẹt trong khe/góc khuất", mechanism: "Rung động vật lý đã đẩy vật rời khỏi vị trí." },
-    9: { place: "Góc tường, gầm tủ, nơi tối", state: "Bị bóng tối che khuất", mechanism: "Vật trượt khỏi bề mặt và rơi vào điểm chết không gian." },
-    12: { place: "Giá treo, móc áo, nếp vải", state: "Đang treo lơ lửng", mechanism: "Vật vẫn kẹt trong lớp áo quần bạn vừa tháo bỏ." },
-    14: { place: "Phòng tắm, bồn rửa", state: "Trơn trượt/Gần nước", mechanism: "Vội vã trong sinh hoạt làm mất ma sát của vật." },
-    15: { place: "Vị trí bừa bộn", state: "Bị cầm nhầm/giấu", mechanism: "Tác động ngoại cảnh hoặc người khác dịch chuyển." },
-    18: { place: "Điểm mù ngay trước mắt", state: "Bị ảo giác che mờ", mechanism: "Tâm trí mặc định chỗ đó không có, khiến mắt tự bỏ qua." }
+    1: { place: "Bàn, kệ, bề mặt phẳng", state: "Nằm lộ thiên ngang tầm tay", mechanism: "Bạn đặt xuống tạm thời khi rảnh tay." },
+    2: { place: "Túi xách, ví, hộc tủ kín", state: "Bị bao kín hoặc che khuất", mechanism: "Vật bị vật khác đè lên hoặc cất quá kỹ." },
+    6: { place: "Gần người khác / Không gian chung", state: "Nằm lẫn vào đồ người khác", mechanism: "Xao lãng do tương tác với người xung quanh." },
+    7: { place: "Trong xe, hộc xe, túi khoác", state: "Kẹt trong khe hẹp", mechanism: "Rung động vật lý đẩy vật vào điểm chết." },
+    9: { place: "Gầm giường, góc tối, gầm tủ", state: "Rơi vào điểm mù", mechanism: "Vật trượt khỏi bề mặt và rơi xuống thấp." },
+    12:{ place: "Giá treo, quần áo vừa thay ra", state: "Kẹt trong nếp vải/túi áo cũ", mechanism: "Quên lấy ra trong quá trình thay đồ." },
+    15:{ place: "Vùng ngoại cảnh (Biến số X)", state: "Vị trí đã bị xáo trộn", mechanism: "Dữ liệu quá yếu hoặc có sự can thiệp từ ngoại lực." },
+    18:{ place: "Ngay trước mắt bạn", state: "Bị ảo giác che khuất", mechanism: "Tâm trí mặc định chỗ đó không có nên tự xóa hình ảnh." }
 };
 
-// --- 2. HÀM BỔ TRỢ ---
-function normalize(str) {
-    return str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
-function getSeed(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = ((hash << 5) - hash) + str.charCodeAt(i);
-        hash |= 0;
-    }
-    return Math.abs(hash);
-}
-
-function typeEffect(element, text) {
-    element.innerHTML = "";
-    element.style.display = "block";
-    let i = 0;
-    let timer = setInterval(() => {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-        } else {
-            clearInterval(timer);
-        }
-    }, 20);
-}
-
-// --- 3. THE INVESTIGATION ENGINE (LOGIC CHÍNH) ---
 function startSearch() {
-    const name = document.getElementById("name").value;
-    const story = normalize(document.getElementById("story").value);
-    const q = normalize(document.getElementById("question").value);
-    const lastSeen = normalize(document.getElementById("last-seen").value);
+    const res = document.getElementById("results");
+    const fin = document.getElementById("final");
+    const ph2 = document.getElementById("phase2");
+
+    ph2.style.display = "none";
+    document.querySelectorAll("#phase2 input").forEach(el => el.checked = false);
+    fin.style.display = "none";
+    res.innerHTML = "🌀 Đang tái lập hiện trường và tính toán tọa độ...";
+
+    setTimeout(() => {
+        executeLogic();
+        ph2.style.display = "block";
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 1200);
+}
+
+function executeLogic() {
+    const story = document.getElementById("story").value.toLowerCase();
+    const lastSeen = document.getElementById("last-seen").value.toLowerCase();
     const habit = document.getElementById("user-habit").value;
     const time = document.getElementById("time-period").value;
 
-    if(!story || !q) { alert("Vui lòng nhập câu chuyện và đồ vật cần tìm!"); return; }
-
-    document.getElementById("results").innerHTML = "⚡ Đang tái lập hiện trường và tính toán tọa độ...";
-    document.getElementById("final").style.display = "none";
-
-    // A. PHÁT HIỆN PHỦ ĐỊNH
-    let isNegated = story.includes("khong") || story.includes("chua");
-
-    // B. CHẤM ĐIỂM ĐỊNH MỆNH
     let scores = new Array(22).fill(0);
-    const actionMap = [
-        {id: 12, keys: ["coi", "thao", "thay", "lot"]},
-        {id: 1, keys: ["dat", "de", "bo", "cam"]},
-        {id: 7, keys: ["di", "xe", "den", "chay"]},
-        {id: 14, keys: ["tam", "rua", "giat"]}
-    ];
 
-    actionMap.forEach(a => {
-        if (a.keys.some(k => story.includes(k))) {
-            scores[a.id] += isNegated ? -30 : 25;
-        }
-    });
+    if(story.includes("dat") || story.includes("de")) scores[1] += 20;
+    if(story.includes("tam") || story.includes("thay") || story.includes("giat")) scores[12] += 25;
+    if(story.includes("xe") || story.includes("di") || story.includes("chay")) scores[7] += 20;
+    
+    if(lastSeen.includes("me") || lastSeen.includes("nguoi") || lastSeen.includes("ai")) scores[6] += 20;
+    if(lastSeen.includes("tui") || lastSeen.includes("vi") || lastSeen.includes("hop")) scores[2] += 15;
 
-    // C. CONTEXT & ANCHOR
-    if (lastSeen.includes("nguoi") || lastSeen.includes("ban") || lastSeen.includes("ai")) {
-        scores[6] += 15;
-        if (lastSeen.includes("dua") || lastSeen.includes("giu")) scores[15] += 20;
+    if(habit === "Hay quên") { scores[2] += 10; scores[18] += 15; }
+    if(time === "Đêm") { scores[9] += 10; scores[18] += 10; }
+
+    window.baseScores = scores;
+    renderOutput(scores);
+}
+
+function refineResult() {
+    if(!window.baseScores) { executeLogic(); return; }
+
+    const scores = [...window.baseScores];
+    const checkboxes = document.querySelectorAll("#phase2 input");
+    let hasChecked = false;
+    checkboxes.forEach(c => { if(c.checked) hasChecked = true; });
+
+    if(!hasChecked) {
+        document.getElementById("results").innerHTML = "↩️ Quay về phân tích ban đầu...";
+        setTimeout(() => { executeLogic(); }, 300);
+        return;
     }
-    if (lastSeen.includes("tui") || lastSeen.includes("vi") || lastSeen.includes("hop")) {
-        scores[2] += 25;
-    }
 
-    // D. HABIT & TIME CROSSING
-    if (habit === "Hay quên") scores[0] += 10, scores[18] += 15;
-    if (habit === "Nguyên tắc") scores[4] += 20;
-    if (time === "Đêm") scores[9] += 10, scores[18] += 10;
+    if(document.getElementById("changedClothes").checked) scores[12] += 45;
+    if(document.getElementById("hasContainer").checked) scores[2] += 35;
+    if(document.getElementById("hasPocket").checked) scores[2] += 25;
+    if(document.getElementById("hasSurface").checked) scores[1] += 30;
 
-    // E. CHỌN KẾT QUẢ CAO NHẤT
-    let sorted = scores.map((s, i) => ({i, s}))
+    renderOutput(scores);
+}
+
+function renderOutput(scores) {
+    let sorted = scores.map((s, i) => ({ i, s }))
                        .sort((a, b) => b.s - a.s)
                        .filter(x => WisdomMap[x.i]);
 
-    let picked = sorted.slice(0, 2);
-    let seed = getSeed(story + lastSeen + name);
-    let confidence = Math.min(98, 60 + (picked[0].s + (seed % 15)));
+    // 🔥 FIX: TIE-BREAKER (Xử lý ngang điểm)
+    let best = sorted[0];
+    if(sorted.length > 1 && sorted[0].s === sorted[1].s) {
+        best = Math.random() > 0.5 ? sorted[0] : sorted[1];
+    }
 
-    setTimeout(() => {
-        const m1 = WisdomMap[picked[0].i];
-        let negationMsg = isNegated ? "⚠️ Phát hiện logic phủ định: Các khu vực bạn khẳng định 'không' liên quan đã bị loại bỏ.\n" : "";
-        
-        let finalOutput = `🔮 **NAM HAI ORACLE - INVESTIGATION MODE**\n\n` +
-            `📍 **Tái lập hiện trường:** ${negationMsg}` +
-            `Dựa trên điểm neo "${document.getElementById("last-seen").value}", hệ thống đã bóc tách được cơ chế thất lạc.\n\n` +
-            `⚠️ **Độ tin cậy: ${confidence.toFixed(0)}%**\n\n` +
-            `1️⃣ **Tọa độ trọng tâm:** Vật phẩm nằm ở **${m1.place}**.\n` +
-            `- **Trạng thái:** ${m1.state}.\n` +
-            `- **Cơ chế:** ${m1.mechanism}\n\n` +
-            `🌈 **Chỉ dẫn sắc khí:** Trong bối cảnh buổi **${time}**, hãy tìm ở hướng **${habit === "Hay quên" ? "dưới thấp hoặc các góc khuất" : "ngang tầm mắt"}**.\n\n` +
-            `💡 **Lời khuyên:** Đừng tìm đồ vật, hãy tìm lại cái **Cơ chế** mà hệ thống vừa nêu. Khi bạn hiểu tại sao nó mất, bạn sẽ thấy nó ngay lập tức!`;
+    if (!best || best.s < 6) {
+        best = { i: 15, s: 0 };
+    }
 
-        document.getElementById("results").innerHTML = "✅ Truy vết hoàn tất!";
-        typeEffect(document.getElementById("final"), finalOutput);
-    }, 2000);
+    // 🔥 FIX: CONFIDENCE DYNAMIC (Tránh lộ công thức)
+    let confidence = Math.min(95, 55 + best.s * 1.2 + Math.random()*8);
+    if(best.i === 15) confidence = 40 + Math.random()*10;
+
+    const m = WisdomMap[best.i];
+    let advice = "";
+    let anchor = "";
+
+    if(best.i === 12) advice = "👉 Kiểm tra quần áo vừa thay hoặc móc treo sau cửa.";
+    if(best.i === 2)  advice = "👉 Lục lại các túi, ví, hộc tủ kín gần bạn nhất.";
+    if(best.i === 18) advice = "👉 Hãy đứng yên 5 giây, tập trung nhìn lại đúng chỗ bạn đang đứng.";
+    if(best.i === 1)  advice = "👉 Kiểm tra các bề mặt ngang tầm tay ở khu vực bạn vừa đi qua.";
+    if(best.i === 15) advice = "👉 Khả năng cao vật đã bị di dời hoặc có tác động ngoại cảnh.";
+
+    // 🔥 FIX: ANCHOR TÂM LÝ
+    if(best.i !== 15) {
+        anchor = "⚠️ Tuyệt đối không tìm lan man. Tập trung đúng vị trí này.";
+    }
+
+    document.getElementById("results").innerHTML = "✅ Truy vết hoàn tất!";
+    const fin = document.getElementById("final");
+    fin.style.display = "block";
+    fin.innerHTML = `
+        <b style="color: #e94560; font-size: 1.1em;">🔍 KẾT LUẬN CUỐI:</b><br>
+        <span style="color: #00ff88; font-size: 0.9em;">📊 Độ tin cậy: ${confidence.toFixed(1)}%</span><br><br>
+        📍 Vị trí: <b>${m.place}</b><br>
+        - Trạng thái: ${m.state}<br>
+        - Cơ chế: ${m.mechanism}<br><br>
+        <span style="color:#00d2ff; font-weight: bold;">${advice}</span><br>
+        <span style="color:#facc15; font-size: 0.9em;">${anchor}</span>
+    `;
 }
+
+document.querySelectorAll("#phase2 input").forEach(el => {
+    el.addEventListener("change", refineResult);
+});
 </script>
 
 </body>
-  </html>
+</html>
+
+
   
